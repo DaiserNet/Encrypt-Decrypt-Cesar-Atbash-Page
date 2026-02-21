@@ -1,1 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  margin: 0;   /* elimina márgenes */
+  padding: 0;  /* elimina relleno */
+  height: 100%; /* asegura que ocupe toda la pantalla */
+}
