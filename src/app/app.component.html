@@ -55,17 +55,13 @@
           placeholder="ABC...123">
       </div>
 
-      <!-- ... (código anterior hasta el input de desplazamiento) ... -->
-
       <div class="input-wrapper" *ngIf="moduloActivo === 'CESAR'">
         <span class="prefix"># set_shift_value -n</span>
         <input type="number" [(ngModel)]="desplazamientoCesar" (ngModelChange)="procesarTexto()"
           class="hacker-input short-input">
       </div>
 
-      <!-- ===== NUEVA SECCIÓN DE ATAQUE (solo en DESCIFRAR) ===== -->
       <div *ngIf="operacion === 'DESCIFRAR'">
-        <!-- Ataque para César -->
         <div *ngIf="moduloActivo === 'CESAR'">
           <div class="command-line">
             <span class="prompt">{{ terminalUser }}</span>:<span class="host">~</span>$ ./al_kindi_attack.sh
@@ -75,7 +71,6 @@
           </div>
         </div>
 
-        <!-- Ataque para Atbash (informativo) -->
         <div *ngIf="moduloActivo === 'ATBASH'">
           <div class="command-line">
             <span class="prompt">{{ terminalUser }}</span>:<span class="host">~</span>$ ./atbash_attack.sh
@@ -86,12 +81,9 @@
         </div>
       </div>
 
-      <!-- Cuadro de resultados del análisis (solo para César) -->
       <div class="output-box analysis-box" *ngIf="analisisAlKindi && moduloActivo === 'CESAR'">
         {{ analisisAlKindi }}
       </div>
-
-      <!-- ... (resto del código, asegurarse de que no hay etiquetas sin cerrar) ... -->
 
       <div class="input-wrapper">
         <span class="prefix"># input_stream</span>

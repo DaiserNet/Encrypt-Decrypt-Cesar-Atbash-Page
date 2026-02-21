@@ -41,8 +41,6 @@ export class AppComponent {
       return;
     }
 
-    // NORMALIZACIÓN: Si el alfabeto es solo mayúsculas, convertimos la entrada a mayúsculas
-    // Si es el preset ASCII (que incluye minúsculas), dejamos el texto tal cual.
     let textoATrabajar = this.esAscii ? this.textoEntrada : this.textoEntrada.toUpperCase();
 
     const shift = this.operacion === 'CIFRAR' ? this.desplazamientoCesar : -this.desplazamientoCesar;
@@ -57,7 +55,7 @@ export class AppComponent {
   private miLogicaCesar(texto: string, desplazamiento: number, alfabeto: string): string {
     let resultado = '';
     const N = alfabeto.length;
-    if (N === 0) return texto; // Evitar división por cero
+    if (N === 0) return texto; 
 
     for (const char of texto) {
       const index = alfabeto.indexOf(char);
@@ -86,13 +84,13 @@ export class AppComponent {
   }
 
   setPreset(opcion: number) {
-    this.esAscii = false; // Reset por defecto
+    this.esAscii = false; 
     switch (opcion) {
       case 1: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'; break;
       case 2: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789'; break;
       case 3: this.alfabetoBase = 'ABCDEFGHIKLMNOPQRSTVXYZ'; break;
       case 4:
-        this.esAscii = true; // El ASCII sí distingue mayúsculas de minúsculas
+        this.esAscii = true; 
         let ascii = '';
         for (let i = 32; i <= 126; i++) ascii += String.fromCharCode(i);
         this.alfabetoBase = ascii;
@@ -152,7 +150,6 @@ export class AppComponent {
       return;
     }
 
-    // 1. Contar frecuencias observadas en el texto cifrado (solo caracteres del alfabeto)
     const frecObs = new Array(N).fill(0);
     let totalValidos = 0;
     for (const char of textoATrabajar) {
@@ -167,34 +164,27 @@ export class AppComponent {
       return;
     }
 
-    // Normalizar frecuencias observadas
     const frecObsNorm = frecObs.map(v => v / totalValidos);
 
-    // 2. Preparar vector de frecuencias esperadas para cada índice del alfabeto
     const frecEsp = new Array(N).fill(0);
     for (let i = 0; i < N; i++) {
       const char = this.alfabetoBase[i];
       if (this.FRECUENCIAS_ES.hasOwnProperty(char)) {
         frecEsp[i] = this.FRECUENCIAS_ES[char];
       } else {
-        frecEsp[i] = 0; // Caracteres sin frecuencia conocida (ej. dígitos) se ignoran
+        frecEsp[i] = 0;
       }
     }
-    // Normalizar frecuencias esperadas para que sumen 1 (por si algunos caracteres no están en la tabla)
     const sumaEsp = frecEsp.reduce((a, b) => a + b, 0);
     if (sumaEsp > 0) {
       for (let i = 0; i < N; i++) frecEsp[i] /= sumaEsp;
     }
 
-    // 3. Probar todos los desplazamientos y calcular la diferencia L1
     let mejorShift = 0;
     let menorDiferencia = Infinity;
     const diferencias: number[] = [];
 
     for (let shift = 0; shift < N; shift++) {
-      // Para este shift, la distribución observada del texto claro sería:
-      // la frecuencia de la letra en posición j en claro corresponde a la frecuencia observada en (j+shift) mod N en cifrado.
-      // Comparamos frecEsp[j] con frecObsNorm[(j+shift) % N]
       let diff = 0;
       for (let j = 0; j < N; j++) {
         const obsIdx = (j + shift) % N;
@@ -207,7 +197,6 @@ export class AppComponent {
       }
     }
 
-    // 4. Mostrar resultados y aplicar descifrado
     this.analisisAlKindi = `> ANÁLISIS DE FRECUENCIAS COMPLETADO:\n` +
       `> Desplazamiento más probable: ${mejorShift} (diferencia L1 = ${menorDiferencia.toFixed(4)})\n` +
       `> Forzando descifrado con ese valor...`;
@@ -219,7 +208,6 @@ export class AppComponent {
 
   ejecutarAtbashDecrypt() {
     this.analisisAlKindi = "> ATBASH: No se requiere análisis de frecuencias. El descifrado se aplica automáticamente al introducir el texto.";
-    // Forzamos un reproceso por si acaso
     this.procesarTexto();
   }
 
