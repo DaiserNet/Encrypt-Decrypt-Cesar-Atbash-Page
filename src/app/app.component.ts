@@ -44,7 +44,6 @@ export class AppComponent {
       return;
     }
 
-    // ELIMINADA la conversión a mayúsculas forzada. Respetamos el texto tal cual.
     let textoATrabajar = this.textoEntrada;
 
     const shift = this.operacion === 'CIFRAR' ? this.desplazamientoCesar : -this.desplazamientoCesar;

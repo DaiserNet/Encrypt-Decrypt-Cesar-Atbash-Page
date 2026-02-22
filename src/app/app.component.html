@@ -1,5 +1,7 @@
+<!-- [H-1] -->
 <div class="crt-screen">
   <div class="terminal-window">
+    <!-- [H-2] -->
     <div class="window-header">
       <div class="window-controls">
         <span class="control red"></span>
@@ -17,6 +19,8 @@
       <div class="command-line">
         <span class="prompt">{{ terminalUser }}</span>:<span class="host">~</span>$ set_op_mode
       </div>
+
+      <!-- [H-3] -->
       <div class="module-buttons">
         <button (click)="setOperacion('CIFRAR')" [class.active]="operacion === 'CIFRAR'">[E]NCRYPT</button>
         <button (click)="setOperacion('DESCIFRAR')" [class.active]="operacion === 'DESCIFRAR'">[D]ECRYPT</button>
@@ -30,6 +34,7 @@
         <button (click)="seleccionarModulo('ATBASH')" [class.active]="moduloActivo === 'ATBASH'">[A]TBASH_MOD</button>
       </div>
 
+      <!-- [H-4] -->
       <div class="presets">
         <span class="prefix"># select_alphabet_preset --list</span>
         <div class="preset-item" (click)="setPreset(1)">
@@ -48,19 +53,21 @@
           <span class="preset-prompt">>></span> [5] Personalizado (Manual)
         </div>
       </div>
-
+      
+      <!-- [H-5] -->
       <div class="input-wrapper">
         <span class="prefix"># active_charset_buffer</span>
         <input type="text" [(ngModel)]="alfabetoBase" (ngModelChange)="procesarTexto()" class="hacker-input"
           placeholder="ABC...123">
       </div>
-
+      
       <div class="input-wrapper" *ngIf="moduloActivo === 'CESAR'">
         <span class="prefix"># set_shift_value -n</span>
         <input type="number" [(ngModel)]="desplazamientoCesar" (ngModelChange)="procesarTexto()"
           class="hacker-input short-input">
       </div>
-
+      
+      <!-- [H-6] -->
       <div *ngIf="operacion === 'DESCIFRAR'">
         <div *ngIf="moduloActivo === 'CESAR'">
           <div class="command-line">
@@ -81,20 +88,25 @@
         </div>
       </div>
 
+      <!-- [H-7] -->
       <div class="output-box analysis-box" *ngIf="analisisAlKindi && operacion === 'DESCIFRAR'">
         {{ analisisAlKindi }}
       </div>
 
+      <!-- [H-8] -->
       <div class="input-wrapper">
         <span class="prefix"># input_stream</span>
         <textarea [(ngModel)]="textoEntrada" (ngModelChange)="procesarTexto()" class="hacker-input textarea"
           placeholder="Esperando entrada de datos..."></textarea>
       </div>
-
+      
+      <!-- [H-9] -->
       <div class="output-header">
         <span class="output-label">> status: COMPLETED_PROCESS <span class="blinking-cursor">_</span></span>
         <button (click)="copiarTexto()" class="copy-btn">[ COPY_RESULT ]</button>
       </div>
+
+      <!-- [H-10] -->
       <div class="output-box">
         {{ textoSalida || 'Waiting for system data...' }}
       </div>
