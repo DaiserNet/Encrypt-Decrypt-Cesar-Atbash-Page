@@ -18,16 +18,16 @@
         <span class="prompt">{{ terminalUser }}</span>:<span class="host">~</span>$ set_op_mode
       </div>
       <div class="module-buttons">
-        <button (click)="setOperacion('CIFRAR')" [class.active]="operacion === 'CIFRAR'">[ ENCRYPT ]</button>
-        <button (click)="setOperacion('DESCIFRAR')" [class.active]="operacion === 'DESCIFRAR'">[ DECRYPT ]</button>
+        <button (click)="setOperacion('CIFRAR')" [class.active]="operacion === 'CIFRAR'">[E]NCRYPT</button>
+        <button (click)="setOperacion('DESCIFRAR')" [class.active]="operacion === 'DESCIFRAR'">[D]ECRYPT</button>
       </div>
 
       <div class="command-line">
         <span class="prompt">{{ terminalUser }}</span>:<span class="host">~</span>$ ./select_cipher.sh
       </div>
       <div class="module-buttons">
-        <button (click)="seleccionarModulo('CESAR')" [class.active]="moduloActivo === 'CESAR'">[ CESAR_MOD ]</button>
-        <button (click)="seleccionarModulo('ATBASH')" [class.active]="moduloActivo === 'ATBASH'">[ ATBASH_MOD ]</button>
+        <button (click)="seleccionarModulo('CESAR')" [class.active]="moduloActivo === 'CESAR'">[C]ESAR_MOD</button>
+        <button (click)="seleccionarModulo('ATBASH')" [class.active]="moduloActivo === 'ATBASH'">[A]TBASH_MOD</button>
       </div>
 
       <div class="presets">
@@ -81,7 +81,7 @@
         </div>
       </div>
 
-      <div class="output-box analysis-box" *ngIf="analisisAlKindi && moduloActivo === 'CESAR'">
+      <div class="output-box analysis-box" *ngIf="analisisAlKindi && operacion === 'DESCIFRAR'">
         {{ analisisAlKindi }}
       </div>
 

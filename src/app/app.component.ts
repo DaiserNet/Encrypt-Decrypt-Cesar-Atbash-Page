@@ -12,9 +12,9 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'CifradoCesarAtbash';
-
+  /* [1] */
   terminalUser = 'root@alkindi';
-  alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ ';
+  alfabetoBase = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   moduloActivo: 'CESAR' | 'ATBASH' = 'CESAR';
   operacion: 'CIFRAR' | 'DESCIFRAR' = 'CIFRAR';
   desplazamientoCesar = 3;
@@ -25,23 +25,27 @@ export class AppComponent {
 
   private esAscii = false;
 
+  /* [2] */
   seleccionarModulo(modulo: 'CESAR' | 'ATBASH') {
     this.moduloActivo = modulo;
+    this.analisisAlKindi = '';
     this.procesarTexto();
   }
-
+  /* [3] */
   setOperacion(op: 'CIFRAR' | 'DESCIFRAR') {
     this.operacion = op;
+    this.analisisAlKindi = '';
     this.procesarTexto();
   }
-
+  /* [4] */
   procesarTexto() {
     if (!this.textoEntrada) {
       this.textoSalida = '';
       return;
     }
 
-    let textoATrabajar = this.esAscii ? this.textoEntrada : this.textoEntrada.toUpperCase();
+    // ELIMINADA la conversión a mayúsculas forzada. Respetamos el texto tal cual.
+    let textoATrabajar = this.textoEntrada;
 
     const shift = this.operacion === 'CIFRAR' ? this.desplazamientoCesar : -this.desplazamientoCesar;
 
@@ -52,10 +56,11 @@ export class AppComponent {
     }
   }
 
+  /* [5] */
   private miLogicaCesar(texto: string, desplazamiento: number, alfabeto: string): string {
     let resultado = '';
     const N = alfabeto.length;
-    if (N === 0) return texto; 
+    if (N === 0) return texto;
 
     for (const char of texto) {
       const index = alfabeto.indexOf(char);
@@ -68,7 +73,7 @@ export class AppComponent {
     }
     return resultado;
   }
-
+  /* [6] */
   private miLogicaAtbash(texto: string, alfabeto: string): string {
     let resultado = '';
     const N = alfabeto.length;
@@ -82,30 +87,32 @@ export class AppComponent {
     }
     return resultado;
   }
-
+  /* [7] */
   setPreset(opcion: number) {
-    this.esAscii = false; 
+    this.esAscii = false;
+    this.analisisAlKindi = '';
     switch (opcion) {
-      case 1: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'; break;
-      case 2: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789'; break;
-      case 3: this.alfabetoBase = 'ABCDEFGHIKLMNOPQRSTVXYZ'; break;
+      case 1: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz'; break;
+      case 2: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789'; break;
+      case 3: this.alfabetoBase = 'ABCDEFGHIKLMNOPQRSTVXYZabcdefghiklmnopqrstuvxyz'; break;
       case 4:
-        this.esAscii = true; 
+        this.esAscii = true;
         let ascii = '';
         for (let i = 32; i <= 126; i++) ascii += String.fromCharCode(i);
         this.alfabetoBase = ascii;
         break;
-      case 5: this.alfabetoBase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '; break;
+      case 5: this.alfabetoBase = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789 '; break;
     }
     this.procesarTexto();
   }
-
+  /* [8] */
   async copiarTexto() {
     if (this.textoSalida) {
       await navigator.clipboard.writeText(this.textoSalida);
     }
   }
-
+  
+  /* [9] */
   private readonly FRECUENCIAS_ES: { [key: string]: number } = {
     ' ': 0.180,
     'E': 0.1315,
@@ -137,19 +144,22 @@ export class AppComponent {
     'W': 0.0001
   };
 
+  /* [10] */
   ejecutarAlKindi() {
     if (!this.textoEntrada || this.moduloActivo !== 'CESAR') {
       this.analisisAlKindi = "> ERROR: Se requiere texto cifrado en modo CESAR para analizar.";
       return;
     }
 
-    const textoATrabajar = this.esAscii ? this.textoEntrada : this.textoEntrada.toUpperCase();
+    const textoATrabajar = this.textoEntrada; 
     const N = this.alfabetoBase.length;
+    
     if (N === 0) {
       this.analisisAlKindi = "> ERROR: Alfabeto vacío.";
       return;
     }
 
+    /* [10.2] */
     const frecObs = new Array(N).fill(0);
     let totalValidos = 0;
     for (const char of textoATrabajar) {
@@ -159,27 +169,35 @@ export class AppComponent {
         totalValidos++;
       }
     }
+    
     if (totalValidos === 0) {
       this.analisisAlKindi = "> ERROR: No hay caracteres válidos en el texto.";
       return;
     }
 
+    /* [10.3] */
     const frecObsNorm = frecObs.map(v => v / totalValidos);
 
+    /* [10.4] */
     const frecEsp = new Array(N).fill(0);
     for (let i = 0; i < N; i++) {
       const char = this.alfabetoBase[i];
-      if (this.FRECUENCIAS_ES.hasOwnProperty(char)) {
-        frecEsp[i] = this.FRECUENCIAS_ES[char];
+      const charFrecuencia = char.toUpperCase(); 
+      
+      if (this.FRECUENCIAS_ES.hasOwnProperty(charFrecuencia)) {
+        frecEsp[i] = this.FRECUENCIAS_ES[charFrecuencia];
       } else {
         frecEsp[i] = 0;
       }
     }
+
+    /* [10.5] */
     const sumaEsp = frecEsp.reduce((a, b) => a + b, 0);
     if (sumaEsp > 0) {
       for (let i = 0; i < N; i++) frecEsp[i] /= sumaEsp;
     }
 
+    /* [10.6] */
     let mejorShift = 0;
     let menorDiferencia = Infinity;
     const diferencias: number[] = [];
@@ -193,19 +211,21 @@ export class AppComponent {
       diferencias.push(diff);
       if (diff < menorDiferencia) {
         menorDiferencia = diff;
-        mejorShift = shift;
+        mejorShift = shift % N;
       }
     }
 
+    /* [10.7] */
     this.analisisAlKindi = `> ANÁLISIS DE FRECUENCIAS COMPLETADO:\n` +
-      `> Desplazamiento más probable: ${mejorShift} (diferencia L1 = ${menorDiferencia.toFixed(4)})\n` +
+      `> Desplazamiento más probable: ${mejorShift % N} (diferencia L1 = ${menorDiferencia.toFixed(4)})\n` +
       `> Forzando descifrado con ese valor...`;
 
     this.desplazamientoCesar = mejorShift;
     this.operacion = 'DESCIFRAR';
     this.procesarTexto();
   }
-
+  
+  /* [11] */
   ejecutarAtbashDecrypt() {
     this.analisisAlKindi = "> ATBASH: No se requiere análisis de frecuencias. El descifrado se aplica automáticamente al introducir el texto.";
     this.procesarTexto();
