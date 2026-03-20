@@ -110,7 +110,7 @@ export class AppComponent {
       await navigator.clipboard.writeText(this.textoSalida);
     }
   }
-  
+
   /* [9] */
   private readonly FRECUENCIAS_ES: { [key: string]: number } = {
     ' ': 0.180,
@@ -150,9 +150,9 @@ export class AppComponent {
       return;
     }
 
-    const textoATrabajar = this.textoEntrada; 
+    const textoATrabajar = this.textoEntrada;
     const N = this.alfabetoBase.length;
-    
+
     if (N === 0) {
       this.analisisAlKindi = "> ERROR: Alfabeto vacío.";
       return;
@@ -168,7 +168,7 @@ export class AppComponent {
         totalValidos++;
       }
     }
-    
+
     if (totalValidos === 0) {
       this.analisisAlKindi = "> ERROR: No hay caracteres válidos en el texto.";
       return;
@@ -181,8 +181,8 @@ export class AppComponent {
     const frecEsp = new Array(N).fill(0);
     for (let i = 0; i < N; i++) {
       const char = this.alfabetoBase[i];
-      const charFrecuencia = char.toUpperCase(); 
-      
+      const charFrecuencia = char.toUpperCase();
+
       if (this.FRECUENCIAS_ES.hasOwnProperty(charFrecuencia)) {
         frecEsp[i] = this.FRECUENCIAS_ES[charFrecuencia];
       } else {
@@ -214,16 +214,36 @@ export class AppComponent {
       }
     }
 
-    /* [10.7] */
-    this.analisisAlKindi = `> ANÁLISIS DE FRECUENCIAS COMPLETADO:\n` +
-      `> Desplazamiento más probable: ${mejorShift % N} (diferencia L1 = ${menorDiferencia.toFixed(4)})\n` +
-      `> Forzando descifrado con ese valor...`;
+    // // /* [10.7] */
+    // this.analisisAlKindi = `> ANÁLISIS DE FRECUENCIAS COMPLETADO:\n` +
+    //   `> Desplazamiento más probable: ${mejorShift % N} (diferencia L1 = ${menorDiferencia.toFixed(4)})\n` +
+    //   `> Forzando descifrado con ese valor...`;
+
+    // this.desplazamientoCesar = mejorShift;
+    // this.operacion = 'DESCIFRAR';
+    // this.procesarTexto();
+    
+    /* [10.7] Modificado */
+    const ranking = diferencias
+      .map((diff, index) => ({ shift: index, error: diff }))
+      .sort((a, b) => a.error - b.error);
+
+    const topCandidatos = ranking.slice(0, 5);
+
+    let tablaResultados = "> TOP 5 CANDIDATOS (Menor error L1):\n";
+    topCandidatos.forEach((c, i) => {
+      tablaResultados += `> ${i + 1}. Shift: ${c.shift} | Error: ${c.error.toFixed(4)}\n`;
+    });
+
+    this.analisisAlKindi = `> ANÁLISIS DE FRECUENCIAS COMPLETADO\n` +
+      `${tablaResultados}` +
+      `> \n> Aplicando el candidato más probable (Shift ${mejorShift})...`;
 
     this.desplazamientoCesar = mejorShift;
     this.operacion = 'DESCIFRAR';
     this.procesarTexto();
   }
-  
+
   /* [11] */
   ejecutarAtbashDecrypt() {
     this.analisisAlKindi = "> ATBASH: No se requiere análisis de frecuencias. El descifrado se aplica automáticamente al introducir el texto.";
